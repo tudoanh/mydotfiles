@@ -54,6 +54,7 @@ Plugin 'VundleVim/Vundle.vim'
 Bundle 'Rykka/riv.vim'
 
 Plugin 'tpope/vim-fugitive'
+Plugin 'junegunn/fzf'
 Plugin 'junegunn/fzf.vim'
 Plugin 'tpope/vim-surround'
 Plugin 'preservim/nerdtree'
@@ -69,6 +70,7 @@ Plugin 'Shougo/deoplete.nvim'
 Plugin 'roxma/nvim-yarp'
 Plugin 'roxma/vim-hug-neovim-rpc'
 Plugin 'deoplete-plugins/deoplete-jedi'
+" Plugin 'soramugi/auto-ctags.vim'
 
 
 " All of your Plugins must be added before the following line
@@ -84,6 +86,7 @@ filetype plugin indent on    " required
 " https://github.com/junegunn/fzf.vim
 let g:fzf_tags_command = 'ctags -R'
 let g:fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr"'
+nnoremap <C-p> :<C-u>FZF<CR>
 
 " NERDTree 
 " https://github.com/preservim/nerdtree
@@ -105,6 +108,12 @@ let g:mix_format_on_save = 1
 
 " deoplete
 let g:deoplete#enable_at_startup = 1
+
+" autoctags
+" let g:auto_ctags = 1
+" let g:auto_ctags_directory_list = ['.git', '.svn']
+" let g:auto_ctags_tags_name = 'tags'
+" let g:auto_ctags_filetype_mode = 1
 
 " ======== END OF CUSTOM CONFIGS =========
 
@@ -276,8 +285,8 @@ vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
 " => Moving around, tabs, windows and buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
-map <space> /
-map <C-space> ?
+" map <space> /
+" map <C-space> ?
 
 " Disable highlight when <leader><cr> is pressed
 map <silent> <leader><cr> :noh<cr>
