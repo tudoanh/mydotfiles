@@ -51,6 +51,7 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 
 " plugin on GitHub repo
+Bundle 'Rykka/riv.vim'
 
 Plugin 'tpope/vim-fugitive'
 Plugin 'junegunn/fzf.vim'
@@ -64,6 +65,10 @@ Plugin 'itchyny/lightline.vim'
 Plugin 'elixir-editors/vim-elixir'
 Plugin 'mhinz/vim-mix-format'
 Plugin 'slashmili/alchemist.vim'
+Plugin 'Shougo/deoplete.nvim'
+Plugin 'roxma/nvim-yarp'
+Plugin 'roxma/vim-hug-neovim-rpc'
+Plugin 'deoplete-plugins/deoplete-jedi'
 
 
 " All of your Plugins must be added before the following line
@@ -97,6 +102,9 @@ set noshowmode
 " vim-mix-format
 " https://github.com/mhinz/vim-mix-format
 let g:mix_format_on_save = 1
+
+" deoplete
+let g:deoplete#enable_at_startup = 1
 
 " ======== END OF CUSTOM CONFIGS =========
 
