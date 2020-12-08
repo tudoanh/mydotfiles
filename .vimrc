@@ -70,6 +70,15 @@ Plugin 'Shougo/deoplete.nvim'
 Plugin 'roxma/nvim-yarp'
 Plugin 'roxma/vim-hug-neovim-rpc'
 Plugin 'deoplete-plugins/deoplete-jedi'
+Plugin 'psf/black'
+Plugin 'tpope/vim-endwise'
+
+Plugin 'lervag/vimtex'
+Plugin 'SirVer/ultisnips'
+Plugin 'honza/vim-snippets'
+Plugin 'KeitaNakamura/tex-conceal.vim'
+Plugin 'rust-lang/rust.vim'
+
 " Plugin 'soramugi/auto-ctags.vim'
 
 
@@ -82,11 +91,37 @@ filetype plugin indent on    " required
 
 " ======== MY CUSTOM CONFIGS =========
 
+" https://stackoverflow.com/questions/32769488/double-vim-surround-with
+let b:surround_{char2nr('b')} = "**\r**"
+
+" Vimtex
+let g:tex_flavor='latex'
+let g:vimtex_view_method='zathura'
+let g:vimtex_quickfix_mode=0
+set conceallevel=1
+let g:tex_conceal='abdmg'
+
+let g:UltiSnipsSnippetDirectories=["UltiSnips"]
+let g:UltiSnipsExpandTrigger = '<tab>'
+let g:UltiSnipsJumpForwardTrigger = '<tab>'
+let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
+
+set conceallevel=1
+let g:tex_conceal='abdmg'
+hi Conceal ctermbg=none
+
+" setlocal spell
+" set spelllang=en_us
+inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
+
 " fzf 
 " https://github.com/junegunn/fzf.vim
 let g:fzf_tags_command = 'ctags -R'
 let g:fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr"'
 nnoremap <C-p> :<C-u>FZF<CR>
+
+" python Black
+autocmd BufWritePre *.py execute ':Black'
 
 " NERDTree 
 " https://github.com/preservim/nerdtree
@@ -463,6 +498,7 @@ function! VisualSelection(direction, extra_filter) range
 endfunction
 
 set nu
+set nofoldenable
 
-
-
+" Rust
+let g:rustfmt_autosave = 1
