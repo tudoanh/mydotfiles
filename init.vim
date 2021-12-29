@@ -38,7 +38,7 @@ filetype off                  " required
 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+call vundle#begin("~/.config/nvim/bundle")
 " alternatively, pass a path where Vundle should install plugins
 "call vundle#begin('~/some/path/here')
 
@@ -57,10 +57,6 @@ Plugin 'editorconfig/editorconfig-vim'
 Plugin 'mattn/emmet-vim'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'itchyny/lightline.vim'
-" Plugin 'elixir-editors/vim-elixir'
-" Plugin 'mhinz/vim-mix-format'
-" Plugin 'slashmili/alchemist.vim'
-Plugin 'dense-analysis/ale'
 Plugin 'psf/black'
 Plugin 'tpope/vim-endwise'
 Plugin 'rstacruz/vim-closer'
@@ -68,9 +64,9 @@ Plugin 'nvim-treesitter/nvim-treesitter'
 Plugin 'nvim-treesitter/playground'
 Plugin 'neovim/nvim-lspconfig'
 Plugin 'JuliaEditorSupport/julia-vim'
+Plugin 'kdheepak/JuliaFormatter.vim'
 Plugin 'nvim-lua/completion-nvim'
 Plugin 'nvim-lua/lsp_extensions.nvim'
-Plugin 'glepnir/lspsaga.nvim'
 
 Plugin 'nvim-lua/popup.nvim'
 Plugin 'nvim-lua/plenary.nvim'
@@ -80,7 +76,7 @@ Plugin 'lervag/vimtex'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 Plugin 'KeitaNakamura/tex-conceal.vim'
-Plugin 'rust-lang/rust.vim'
+Plugin 'ajmwagar/vim-deus'
 
 " Plugin 'soramugi/auto-ctags.vim'
 
@@ -247,10 +243,12 @@ if $COLORTERM == 'gnome-terminal'
     set t_Co=256
 endif
 
-try
-    colorscheme desert
-catch
-endtry
+colors deus
+
+" try
+"     colorscheme desert
+" catch
+" endtry
 
 set background=dark
 
@@ -497,7 +495,7 @@ set nofoldenable
 " ====================
 " Rust config
 " ====================
-" set g:rustfmt_autosave = 1
+let g:rustfmt_autosave = 1
 
 "  Set completeopt to have a better completion experience
 "  :help completeopt
@@ -511,9 +509,6 @@ set shortmess+=c
 
 "  Configure LSP
 lua <<EOF
-  local saga = require 'lspsaga'
-  saga.init_lsp_saga()
-
   local nvim_lsp = require'lspconfig'
 
 -- Enable rust_analyzer
@@ -529,19 +524,22 @@ lua <<EOF
 -- )
 EOF
 
+" Enable type inlay hints
+autocmd Filetype rust autocmd CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *
+\ lua require'lsp_extensions'.inlay_hints{ prefix = '', highlight = "Comment", enabled = {"TypeHint", "ChainingHint", "ParameterHint"} }
+
+
 " Set updatetime for CursorHold
 " 300ms of no cursor movement to trigger CursorHold
 set updatetime=300
 " Show diagnostic popup on cursor hold
-autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
+" autocmd FileType julia,rust autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
 
 " Goto previous/next diagnostic warning/error
 nnoremap <silent> g[ <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
 nnoremap <silent> g] <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
 
-" Enable type inlay hints
-autocmd Filetype rust autocmd CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *
-\ lua require'lsp_extensions'.inlay_hints{ prefix = '', highlight = "Comment", enabled = {"TypeHint", "ChainingHint", "ParameterHint"} }
+set signcolumn=yes
 
 
 " Treesitter config
@@ -566,31 +564,22 @@ EOF
 " =====================
 
 lua << EOF
-  local on_attach_vim = function()
-    require'completion'.on_attach()
-  end
-
-  require'lspconfig'.julials.setup{on_attach=on_attach_vim}
+  require'lspconfig'.julials.setup{on_attach=require'completion'.on_attach}
 EOF
 
-autocmd Filetype julia,rust setlocal omnifunc=v:lua.vim.lsp.omnifunc
+" autocmd Filetype julia,rust setlocal omnifunc=v:lua.vim.lsp.omnifunc
 
 
 " Code navigation shortcuts
 nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
-" nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
-" nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
 nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
 nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
 nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
 nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
-nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
 nnoremap <silent> ga    <cmd>lua vim.lsp.buf.code_action()<CR>
-
-nnoremap <silent>K :Lspsaga hover_doc<CR>
-inoremap <silent> <C-k> <Cmd>Lspsaga signature_help<CR>
-nnoremap <silent> gh <Cmd>Lspsaga lsp_finder<CR>
 
 " Telescope
 nnoremap <silent> ;f <cmd>Telescope find_files<cr>
@@ -600,7 +589,7 @@ nnoremap <silent> ;; <cmd>Telescope help_tags<cr>
 
 lua <<EOF
   local actions = require('telescope.actions')
-    require('telescope').setup{
+  require('telescope').setup{
       defaults = {
         mappings = {
           n = {
@@ -610,3 +599,24 @@ lua <<EOF
       }
     }
 EOF
+
+
+let g:JuliaFormatter_options = {
+        \ 'indent'                    : 2,
+        \ 'margin'                    : 120,
+        \ 'always_for_in'             : v:false,
+        \ 'whitespace_typedefs'       : v:false,
+        \ 'whitespace_ops_in_indices' : v:true,
+        \ }
+let g:JuliaFormatter_always_launch_server=1
+
+
+" Python
+lua <<EOF
+  local lsp = require'lspconfig'
+  lsp.pylsp.setup{on_attach=require'completion'.on_attach}
+  lsp.clangd.setup{
+    root_dir = lsp.util.root_pattern('.git');
+  }
+EOF
+
